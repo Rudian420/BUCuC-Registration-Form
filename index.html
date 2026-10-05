@@ -1,0 +1,921 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#06040f">
+<meta name="description" content="Register for the BUCuC Club Fair, Fall 2026.">
+<title>BUCuC Club Fair Fall 2026 Registration</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --void: #06040f;
+    --ink: #f3f0ff;
+    --mute: #aaa3d2;
+    --line: rgba(205, 190, 255, 0.2);
+    --g: #5cffb0;
+    --t: #2de2e6;
+    --v: #8b5cff;
+    --m: #ff4fd8;
+    --gold: #ffcf7d;
+    --bad: #ff93b4;
+    --aur: linear-gradient(100deg, var(--g), var(--t) 32%, var(--v) 66%, var(--m));
+    --display: "Syne", "Arial Black", system-ui, sans-serif;
+    --body: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    min-height: 100svh;
+    background: var(--void);
+    color: var(--ink);
+    font: 400 16px/1.5 var(--body);
+    overflow-x: hidden;
+  }
+
+  /* Sky and atmosphere */
+  #sky { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; display: block; }
+  .shade {
+    position: fixed; inset: 0; z-index: 1; pointer-events: none;
+    background:
+      radial-gradient(120% 80% at 30% 35%, rgba(6, 4, 15, 0) 35%, rgba(6, 4, 15, 0.5) 100%),
+      linear-gradient(180deg, rgba(6, 4, 15, 0.25), rgba(6, 4, 15, 0) 25%, rgba(6, 4, 15, 0.35));
+  }
+  .grain {
+    position: fixed; inset: 0; z-index: 2; pointer-events: none; opacity: 0.07; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+
+  .shell {
+    position: relative; z-index: 3;
+    min-height: 100vh; min-height: 100svh;
+    display: flex; flex-direction: column;
+    padding: max(18px, env(safe-area-inset-top)) clamp(16px, 4vw, 48px) max(22px, env(safe-area-inset-bottom));
+  }
+
+  /* Top bar */
+  .topbar { display: flex; align-items: center; justify-content: space-between; width: min(1200px, 100%); margin: 0 auto; }
+  .brand { display: inline-flex; align-items: center; gap: 10px; font: 800 18px/1 var(--display); letter-spacing: 0.01em; }
+  .brand-eq { display: inline-flex; align-items: flex-end; gap: 2px; height: 16px; }
+  .brand-eq i { width: 3px; border-radius: 2px; background: var(--aur); background-size: 100% 300%; animation: eq 1.1s ease-in-out infinite alternate; }
+  .brand-eq i:nth-child(1) { height: 40%; animation-delay: -0.2s; }
+  .brand-eq i:nth-child(2) { height: 90%; animation-delay: -0.7s; }
+  .brand-eq i:nth-child(3) { height: 60%; animation-delay: -0.4s; }
+  .brand-eq i:nth-child(4) { height: 100%; animation-delay: -0.9s; }
+  @keyframes eq { from { transform: scaleY(0.35); } to { transform: scaleY(1); } }
+  .brand-eq i { transform-origin: bottom; }
+
+  .sound {
+    display: inline-flex; align-items: center; gap: 8px;
+    font: 600 14px/1 var(--body); color: var(--ink);
+    background: rgba(255, 255, 255, 0.06); border: 1px solid var(--line); border-radius: 999px;
+    padding: 10px 14px; cursor: pointer; transition: background 0.2s, border-color 0.2s;
+  }
+  .sound:hover { background: rgba(255, 255, 255, 0.11); }
+  .sound[aria-pressed="true"] { border-color: rgba(92, 255, 176, 0.7); background: rgba(92, 255, 176, 0.12); }
+  .sound svg { width: 18px; height: 18px; flex: none; }
+  .sound:focus-visible, .go:focus-visible, .ghost:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+
+  /* Layout */
+  .layout {
+    flex: 1; width: min(1200px, 100%); margin: 0 auto;
+    padding-block: clamp(20px, 4vh, 56px);
+    display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+    gap: clamp(32px, 6vw, 96px); align-items: center;
+  }
+  .hero { display: flex; flex-direction: column; align-items: flex-start; gap: 26px; min-width: 0; }
+
+  /* Vinyl planet with a staff ring */
+  .system {
+    --d: clamp(170px, 23vw, 290px);
+    position: relative; isolation: isolate;
+    width: calc(var(--d) * 1.9); height: calc(var(--d) * 1.1);
+    margin-left: calc(var(--d) * -0.12);
+    animation: rise 2.2s cubic-bezier(0.18, 0.8, 0.2, 1) both;
+  }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(46px) scale(0.9); filter: blur(6px); }
+    to { opacity: 1; transform: none; filter: none; }
+  }
+  .system::before {
+    content: ""; position: absolute; left: 50%; top: 50%; z-index: -1;
+    width: calc(var(--d) * 2.1); height: calc(var(--d) * 1.5); transform: translate(-50%, -50%);
+    background: radial-gradient(closest-side, rgba(139, 92, 255, 0.34), rgba(45, 226, 230, 0.1) 55%, transparent 100%);
+  }
+  .vinyl {
+    position: absolute; left: 50%; top: 50%; z-index: 1;
+    width: var(--d); height: var(--d); margin: calc(var(--d) / -2) 0 0 calc(var(--d) / -2);
+    border-radius: 50%; overflow: hidden;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), 0 0 60px rgba(139, 92, 255, 0.4), 0 0 150px rgba(45, 226, 230, 0.16);
+  }
+  .disc {
+    position: absolute; inset: 0; border-radius: 50%;
+    background:
+      repeating-radial-gradient(circle, rgba(255, 255, 255, 0.07) 0 1px, rgba(0, 0, 0, 0) 1px 3.2px),
+      conic-gradient(from 30deg, #1d1348, #34196e, #0e3250, #0f4d45, #4c1b70, #1d1348);
+    animation: spin 28s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .disc::after { content: ""; position: absolute; inset: 0; border-radius: 50%; box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.7); }
+  .sheen {
+    position: absolute; inset: 0; border-radius: 50%; mix-blend-mode: screen; pointer-events: none;
+    background: conic-gradient(from 200deg, transparent 0 7%, rgba(255, 255, 255, 0.26) 11%, transparent 17% 55%, rgba(160, 255, 235, 0.18) 60%, transparent 67%);
+  }
+  .label {
+    position: absolute; left: 50%; top: 50%; width: 34%; aspect-ratio: 1; transform: translate(-50%, -50%);
+    border-radius: 50%; z-index: 1;
+    background: radial-gradient(circle at 35% 30%, #fff3d2, var(--gold) 38%, #ff9d5c 72%, #c2447a);
+    display: grid; place-content: center; text-align: center; color: #2a0f3a;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.35);
+  }
+  .label b { position: absolute; left: 0; right: 0; top: 21%; font: 800 calc(var(--d) * 0.042)/1 var(--display); }
+  .label i { position: absolute; left: 0; right: 0; bottom: 17%; font: 600 calc(var(--d) * 0.04)/1 var(--body); font-style: normal; opacity: 0.8; }
+  .label::after { content: ""; position: absolute; left: 50%; top: 50%; width: 9%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; background: #120a2c; }
+
+  .ring {
+    position: absolute; left: 50%; top: 50%; pointer-events: none;
+    width: calc(var(--d) * var(--k)); height: calc(var(--d) * var(--k) * 0.27);
+    border-radius: 50%; border: 1px solid var(--c);
+    transform: translate(-50%, -50%) rotate(-17deg);
+  }
+  .ring.back { z-index: 0; opacity: 0.4; }
+  .ring.front { z-index: 2; opacity: 0.85; clip-path: inset(50% -4% -4% -4%); }
+  .note {
+    position: absolute; left: 50%; top: 50%; z-index: 3; pointer-events: none;
+    font: 700 26px/1 "Segoe UI Symbol", "Noto Sans Symbols 2", "Apple Symbols", var(--body);
+    color: var(--c); text-shadow: 0 0 14px var(--c);
+    will-change: transform;
+  }
+
+  /* Headline */
+  .title { margin: 0; display: block; filter: drop-shadow(0 0 26px rgba(139, 92, 255, 0.5)); }
+  .title span {
+    display: block; background: linear-gradient(100deg, #ffffff 0%, #e3f8ff 38%, #d8caff 72%, #ffd3f4 100%);
+    background-size: 160% 100%; -webkit-background-clip: text; background-clip: text; color: transparent;
+    animation: drift 16s ease-in-out infinite alternate;
+  }
+  @keyframes drift { to { background-position: 100% 0; } }
+  .t1 { font: 800 clamp(42px, 5.6vw, 84px)/0.98 var(--display); letter-spacing: -0.035em; }
+  .t2 { font: 600 clamp(20px, 2.4vw, 32px)/1.2 var(--display); letter-spacing: -0.015em; margin-top: 16px; }
+  .lead { margin: 0; max-width: 36ch; color: rgba(243, 240, 255, 0.82); font-size: clamp(16px, 1.3vw, 18px); }
+
+  /* Panel */
+  .panel {
+    position: relative; min-width: 0;
+    background: rgba(9, 6, 28, 0.66);
+    -webkit-backdrop-filter: blur(16px) saturate(130%); backdrop-filter: blur(16px) saturate(130%);
+    border: 1px solid rgba(255, 255, 255, 0.09); border-radius: 22px;
+    padding: clamp(20px, 3vw, 32px);
+    box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  }
+  .panel::before {
+    content: ""; position: absolute; left: 22px; right: 22px; top: -1px; height: 2px; border-radius: 2px;
+    background: var(--aur); box-shadow: 0 0 18px rgba(139, 92, 255, 0.8);
+  }
+  .panel-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 22px; }
+  .panel-head h2 { margin: 0; font: 700 20px/1.2 var(--display); letter-spacing: -0.01em; }
+  .progress { display: flex; align-items: center; gap: 10px; color: var(--mute); font-size: 13px; white-space: nowrap; }
+  .prog { display: flex; align-items: flex-end; gap: 3px; height: 18px; }
+  .prog i { width: 4px; height: 22%; border-radius: 2px; background: rgba(255, 255, 255, 0.16); transition: height 0.35s cubic-bezier(0.3, 1.4, 0.5, 1), background 0.35s; }
+  .prog i.on { height: var(--h); background: var(--c); }
+
+  .banner {
+    display: none; margin: 0 0 18px; padding: 12px 14px; border-radius: 12px; font-size: 14px; line-height: 1.4;
+    color: var(--bad); background: rgba(255, 147, 180, 0.1); border: 1px solid rgba(255, 147, 180, 0.4);
+  }
+  .banner.show { display: block; }
+
+  .fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 18px; }
+  .field { grid-column: span 2; position: relative; min-width: 0; }
+  .field.half { grid-column: span 1; }
+  .field label { display: block; margin: 0 0 2px; font: 600 13px/1.3 var(--body); color: var(--mute); transition: color 0.2s; }
+  .field:focus-within label { color: var(--ink); }
+  .control { position: relative; display: flex; align-items: center; border-bottom: 1px solid var(--line); transition: border-color 0.2s; }
+  .control input {
+    flex: 1; min-width: 0; width: 100%;
+    background: transparent; border: 0; outline: 0; border-radius: 0;
+    color: var(--ink); font: 500 17px/1.3 var(--body); padding: 9px 2px 9px 0;
+    color-scheme: dark;
+  }
+  .control input::placeholder { color: rgba(176, 169, 216, 0.62); }
+  .control input:-webkit-autofill {
+    -webkit-text-fill-color: var(--ink); caret-color: var(--ink);
+    -webkit-box-shadow: 0 0 0 40px #150e38 inset; transition: background-color 9999s;
+  }
+  input[type="date"]::-webkit-calendar-picker-indicator { opacity: 0.75; cursor: pointer; }
+  input[type="date"]:not(.has) { color: rgba(176, 169, 216, 0.62); }
+  .bar {
+    position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--aur);
+    transform: scaleX(0); transform-origin: left; transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+    box-shadow: 0 0 12px rgba(45, 226, 230, 0.7);
+  }
+  .control:focus-within .bar { transform: scaleX(1); }
+  .tick { width: 18px; height: 18px; flex: none; color: var(--g); opacity: 0; transform: scale(0.5); transition: opacity 0.25s, transform 0.35s cubic-bezier(0.3, 1.6, 0.5, 1); }
+  .field.ok .tick { opacity: 1; transform: none; }
+  .field.bad .control { border-bottom-color: var(--bad); }
+  .err { margin: 6px 0 0; font: 500 13px/1.35 var(--body); color: var(--bad); }
+  .err:empty { display: none; }
+
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; overflow: hidden; }
+
+  .go {
+    margin-top: 28px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 12px;
+    font: 700 16px/1 var(--display); letter-spacing: 0.005em; color: #0a0620;
+    background: var(--aur); background-size: 220% 100%; background-position: 0 0;
+    border: 0; border-radius: 14px; padding: 18px 20px; cursor: pointer;
+    box-shadow: 0 12px 40px -12px rgba(139, 92, 255, 0.8);
+    transition: background-position 0.7s ease, transform 0.12s, box-shadow 0.3s, opacity 0.2s;
+  }
+  .go:hover { background-position: 100% 0; box-shadow: 0 14px 50px -10px rgba(45, 226, 230, 0.7); }
+  .go:active { transform: translateY(1px); }
+  .go:disabled { cursor: progress; opacity: 0.85; }
+  .go svg { width: 16px; height: 16px; flex: none; }
+  .sending { display: none; align-items: flex-end; gap: 3px; height: 16px; }
+  .sending i { width: 3px; height: 100%; background: #0a0620; border-radius: 2px; transform-origin: bottom; animation: eq 0.6s ease-in-out infinite alternate; }
+  .sending i:nth-child(2) { animation-delay: -0.2s; }
+  .sending i:nth-child(3) { animation-delay: -0.4s; }
+  .go.busy .sending { display: inline-flex; }
+  .go.busy .play { display: none; }
+  .panel.shake { animation: shake 0.4s; }
+  @keyframes shake { 20%, 60% { transform: translateX(-6px); } 40%, 80% { transform: translateX(6px); } }
+
+  /* Success */
+  .done h2 { margin: 0 0 8px; font: 700 clamp(24px, 3vw, 30px)/1.15 var(--display); letter-spacing: -0.02em; }
+  .done p { margin: 0 0 22px; color: rgba(243, 240, 255, 0.8); max-width: 38ch; }
+  .ticket {
+    display: grid; grid-template-columns: 1fr auto; border-radius: 16px; overflow: hidden; margin-bottom: 22px;
+    background: linear-gradient(135deg, rgba(92, 255, 176, 0.16), rgba(139, 92, 255, 0.22) 55%, rgba(255, 79, 216, 0.2));
+    border: 1px solid rgba(255, 255, 255, 0.14);
+  }
+  .t-main { padding: 18px 20px; min-width: 0; }
+  .t-event { margin: 0 0 10px; font-size: 13px; color: var(--mute); }
+  .t-name { display: block; font: 700 22px/1.2 var(--display); letter-spacing: -0.01em; overflow-wrap: anywhere; }
+  .t-row { display: flex; gap: 28px; margin-top: 14px; }
+  .t-row small { display: block; font-size: 12px; color: var(--mute); }
+  .t-row b { font-weight: 600; font-size: 16px; }
+  .t-stub { display: flex; align-items: center; justify-content: center; padding: 14px 18px; border-left: 2px dashed rgba(255, 255, 255, 0.25); }
+  .wave { display: flex; align-items: center; gap: 3px; height: 64px; }
+  .wave i { width: 3px; border-radius: 2px; background: var(--ink); opacity: 0.9; animation: eq 1.2s ease-in-out infinite alternate; transform-origin: center; }
+  .ghost {
+    font: 600 15px/1 var(--body); color: var(--ink); background: transparent; border: 1px solid var(--line);
+    border-radius: 12px; padding: 13px 18px; cursor: pointer; transition: background 0.2s;
+  }
+  .ghost:hover { background: rgba(255, 255, 255, 0.08); }
+
+  .foot { width: min(1200px, 100%); margin: 0 auto; color: var(--mute); font-size: 13px; }
+  noscript { display: block; padding: 12px 16px; background: #3a1030; color: #ffd0e4; border-radius: 12px; margin: 12px 0; }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: minmax(0, 1fr); gap: 36px; padding-top: 12px; }
+    .system { --d: clamp(150px, 42vw, 230px); margin-inline: auto; }
+    .hero { align-items: center; text-align: center; }
+    .lead { margin-inline: auto; }
+  }
+  @media (max-width: 480px) {
+    .field.half { grid-column: span 2; }
+    .progress span { display: none; }
+    .t-row { gap: 18px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<canvas id="sky" aria-hidden="true"></canvas>
+<div class="shade" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<div class="shell">
+  <div class="topbar">
+    <div class="brand"><span class="brand-eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>BUCuC</div>
+    <button class="sound" id="soundBtn" type="button" aria-pressed="false" title="Play soft notes as you type">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path id="wave1" d="M15.5 9a4 4 0 0 1 0 6"/><path id="wave2" d="M18.5 6.5a8 8 0 0 1 0 11"/></svg>
+      <span id="soundLabel">Sound off</span>
+    </button>
+  </div>
+
+  <main class="layout">
+    <section class="hero">
+      <div class="system" id="system" aria-hidden="true">
+        <div class="vinyl">
+          <div class="disc"><div class="label"><b>BUCuC</b><i>2026</i></div></div>
+          <div class="sheen"></div>
+        </div>
+      </div>
+      <h1 class="title"><span class="t1">BUCuC<br>Club Fair</span><span class="t2">Fall 2026 Registration</span></h1>
+      <p class="lead">Fill in the eight fields and press register. Every field is required.</p>
+    </section>
+
+    <section class="panel" id="panel" aria-labelledby="panelTitle">
+      <div class="panel-head" id="panelHead">
+        <h2 id="panelTitle">Your details</h2>
+        <div class="progress">
+          <span id="progText" aria-live="polite">0 of 8 filled</span>
+          <div class="prog" id="prog" aria-hidden="true">
+            <i style="--h:55%;--c:#5cffb0"></i><i style="--h:85%;--c:#3df0c8"></i><i style="--h:45%;--c:#2de2e6"></i><i style="--h:100%;--c:#4ec0f5"></i>
+            <i style="--h:70%;--c:#8b5cff"></i><i style="--h:90%;--c:#b55cf5"></i><i style="--h:50%;--c:#e052e8"></i><i style="--h:80%;--c:#ff4fd8"></i>
+          </div>
+        </div>
+      </div>
+
+      <div id="banner" class="banner" role="alert"></div>
+
+      <form id="regForm" novalidate>
+        <div class="fields">
+          <div class="field" data-key="name">
+            <label for="name">Name</label>
+            <div class="control">
+              <input id="name" name="name" type="text" autocomplete="name" maxlength="100" placeholder="Your full name" required aria-describedby="name-err">
+              <svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg>
+              <span class="bar"></span>
+            </div>
+            <p class="err" id="name-err"></p>
+          </div>
+
+          <div class="field half" data-key="studentId">
+            <label for="studentId">Student ID</label>
+            <div class="control">
+              <input id="studentId" name="studentId" type="text" inputmode="numeric" autocomplete="off" maxlength="15" placeholder="24141091" required aria-describedby="studentId-err">
+              <svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg>
+              <span class="bar"></span>
+            </div>
+            <p class="err" id="studentId-err"></p>
+          </div>
+
+          <div class="field half" data-key="semester">
+            <label for="semester">Semester</label>
+            <div class="control">
+              <input id="semester" name="semester" type="text" autocomplete="off" maxlength="40" placeholder="Fall 2026" required aria-describedby="semester-err">
+              <svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg>
+              <span class="bar"></span>
+            </div>
+            <p class="err" id="semester-err"></p>
+          </div>
+
+          <div class="field" data-key="gsuite">
+            <label for="gsuite">G-suite</label>
+            <div class="control">
+              <input id="gsuite" name="gsuite" type="email" inputmode="email" autocomplete="email" autocapitalize="none" spellcheck="false" maxlength="120" placeholder="yourname@g.bracu.ac.bd" required aria-describedby="gsuite-err">
+              <svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg>
+              <span class="bar"></span>
+            </div>
+            <p class="err" id="gsuite-err"></p>
+          </div>
+
+          <div class="field" data-key="personalMail">
+            <label for="personalMail">Personal Mail</label>
+            <div class="control">
+              <input id="personalMail" name="personalMail" type="email" inputmode="email" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="120" placeholder="you@gmail.com" required aria-describedby="personalMail-err">
+              <svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg>
+              <span class="bar"></span>
+            </div>
+            <p class="err" id="personalMail-err"></p>
+          </div>
+
+          <div class="field half" data-key="phone">
+            <label for="phone">Phone No.</label>
+            <div class="control">
+              <input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="01XXXXXXXXX" required aria-describedby="phone-err">
+              <svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg>
+              <span class="bar"></span>
+            </div>
+            <p class="err" id="phone-err"></p>
+          </div>
+
+          <div class="field half" data-key="dob">
+            <label for="dob">Date of Birth</label>
+            <div class="control">
+              <input id="dob" name="dob" type="date" min="1950-01-01" autocomplete="bday" required aria-describedby="dob-err">
+              <svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg>
+              <span class="bar"></span>
+            </div>
+            <p class="err" id="dob-err"></p>
+          </div>
+
+          <div class="field" data-key="facebook">
+            <label for="facebook">Facebook Profile Link</label>
+            <div class="control">
+              <input id="facebook" name="facebook" type="url" inputmode="url" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="300" placeholder="facebook.com/your.profile" required aria-describedby="facebook-err">
+              <svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7"/></svg>
+              <span class="bar"></span>
+            </div>
+            <p class="err" id="facebook-err"></p>
+          </div>
+        </div>
+
+        <!-- Honeypot: people never see this, bots fill it. -->
+        <div class="hp" aria-hidden="true"><label>Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+
+        <button type="submit" class="go" id="submitBtn">
+          <svg class="play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12.4-7.5a1 1 0 0 0 0-1.72L8.5 3.64A1 1 0 0 0 7 4.5z"/></svg>
+          <span class="sending" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span id="goText">Register</span>
+        </button>
+      </form>
+
+      <div class="done" id="done" hidden>
+        <h2 id="doneTitle" tabindex="-1">You are registered.</h2>
+        <p>Your details are saved for the BUCuC Club Fair, Fall 2026.</p>
+        <div class="ticket">
+          <div class="t-main">
+            <p class="t-event">BUCuC Club Fair, Fall 2026</p>
+            <strong class="t-name" id="tName"></strong>
+            <div class="t-row">
+              <div><small>Student ID</small><b id="tId"></b></div>
+              <div><small>Semester</small><b id="tSem"></b></div>
+            </div>
+          </div>
+          <div class="t-stub"><div class="wave" id="wave" aria-hidden="true"></div></div>
+        </div>
+        <button type="button" class="ghost" id="againBtn">Register another student</button>
+      </div>
+    </section>
+  </main>
+
+  <noscript>This registration form needs JavaScript turned on.</noscript>
+  <footer class="foot">BRAC University Cultural Club</footer>
+</div>
+
+<script>
+/* ============ Settings you may want to change ============ */
+const CONFIG = {
+  scriptUrl: "https://script.google.com/macros/s/AKfycbyMYGoeOdru3dQ8TpED4lHiW7HNI63x-YZThWVumyjN7WNIAPYfqhQ7RbBIEEGaTHlKEA/exec",
+  gsuiteDomain: "@g.bracu.ac.bd",   // set to "" to accept any email in the G-suite field
+  studentId: /^\d{8,}$/
+};
+
+/* ============ Sky: stars, aurora curtains, equalizer horizon ============ */
+const Sky = (() => {
+  const cv = document.getElementById("sky");
+  const ctx = cv.getContext("2d");
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const hooks = [];
+  let W = 0, H = 0, DPR = 1, stars = [], shots = [];
+  let bgGrad = null, barGrad = null, glowGrad = null;
+  let energy = 0, boost = 0, mx = 0, my = 0, tx = 0, ty = 0;
+  let T0 = performance.now(), last = T0, nextShot = 3;
+
+  const LAYERS = [
+    { c: [92, 255, 176], base: 0.10, amp: 0.080, f1: 0.0042, f2: 0.0091, s1: 0.22, s2: 0.15, len: 0.48, a: 0.52, off: 0.0 },
+    { c: [45, 226, 230], base: 0.07, amp: 0.090, f1: 0.0036, f2: 0.0073, s1: 0.17, s2: 0.21, len: 0.52, a: 0.40, off: 1.7 },
+    { c: [139, 92, 255], base: 0.13, amp: 0.080, f1: 0.0031, f2: 0.0105, s1: 0.13, s2: 0.18, len: 0.50, a: 0.48, off: 3.1 },
+    { c: [255, 79, 216], base: 0.05, amp: 0.060, f1: 0.0050, f2: 0.0067, s1: 0.19, s2: 0.12, len: 0.42, a: 0.26, off: 4.6 }
+  ];
+
+  function build() {
+    DPR = Math.min(window.devicePixelRatio || 1, 1.75);
+    W = window.innerWidth; H = window.innerHeight;
+    cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+
+    bgGrad = ctx.createLinearGradient(0, 0, 0, H);
+    bgGrad.addColorStop(0, "#04030c"); bgGrad.addColorStop(0.55, "#0a0724"); bgGrad.addColorStop(1, "#160b3c");
+
+    LAYERS.forEach(L => {
+      const g = ctx.createLinearGradient(0, 0, 0, H * L.len);
+      const c = L.c.join(",");
+      g.addColorStop(0, "rgba(" + c + ",0)");
+      g.addColorStop(0.45, "rgba(" + c + ",0.22)");
+      g.addColorStop(0.8, "rgba(" + c + ",0.85)");
+      g.addColorStop(0.92, "rgba(" + c + ",0.42)");
+      g.addColorStop(1, "rgba(" + c + ",0)");
+      L.grad = g;
+    });
+
+    const maxH = barMax();
+    barGrad = ctx.createLinearGradient(0, H, 0, H - maxH * 1.2);
+    barGrad.addColorStop(0, "rgba(139,92,255,0.9)");
+    barGrad.addColorStop(0.55, "rgba(45,226,230,0.9)");
+    barGrad.addColorStop(1, "rgba(92,255,176,1)");
+
+    glowGrad = ctx.createRadialGradient(W / 2, H, 0, W / 2, H, Math.max(W, H) * 0.6);
+    glowGrad.addColorStop(0, "rgba(139,92,255,0.30)");
+    glowGrad.addColorStop(1, "rgba(139,92,255,0)");
+
+    const n = Math.round((W * H) / 5200);
+    stars = Array.from({ length: n }, () => ({
+      x: Math.random() * W, y: Math.random() * H * 0.95, z: Math.random(),
+      r: Math.random() * 1.1 + 0.3, p: Math.random() * 6.28, s: 0.5 + Math.random() * 1.8
+    }));
+  }
+  function barMax() { return Math.min(H * 0.17, 170); }
+
+  function draw(t) {
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    ctx.globalCompositeOperation = "source-over";
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, W, H);
+
+    const intro = reduce ? 1 : Math.min(1, t / 2.6);   // the aurora ignites over the first moments
+
+    // stars
+    for (let i = 0; i < stars.length; i++) {
+      const s = stars[i];
+      const tw = 0.55 + 0.45 * Math.sin(t * s.s + s.p);
+      ctx.globalAlpha = tw * (0.3 + 0.7 * s.z) * Math.min(1, intro * 1.6);
+      ctx.fillStyle = s.z > 0.82 ? "#cfe6ff" : "#ffffff";
+      const px = s.x + mx * s.z * 18, py = s.y + my * s.z * 12;
+      if (s.r > 0.9) { ctx.beginPath(); ctx.arc(px, py, s.r, 0, 6.2832); ctx.fill(); }
+      else ctx.fillRect(px, py, s.r * 1.4, s.r * 1.4);
+    }
+
+    // aurora curtains
+    ctx.globalCompositeOperation = "lighter";
+    const step = W < 700 ? 8 : 5;
+    for (let li = 0; li < LAYERS.length; li++) {
+      const L = LAYERS[li];
+      ctx.fillStyle = L.grad;
+      for (let x = 0; x < W + step; x += step) {
+        const w1 = Math.sin(x * L.f1 + t * L.s1 + L.off);
+        const w2 = Math.sin(x * L.f2 - t * L.s2 * 1.3 + L.off * 2);
+        const y = H * L.base + (w1 * 0.65 + w2 * 0.35) * H * L.amp;
+        const ray = 0.55 + 0.45 * Math.sin(x * 0.045 + t * 1.1 + L.off * 3) * Math.sin(x * 0.013 - t * 0.4);
+        const env = 0.25 + 0.75 * Math.pow(Math.max(0, Math.sin(Math.PI * Math.min(1, Math.max(0, x / W)))), 0.6);
+        const a = L.a * ray * env * intro * (1 + boost * 0.9 + energy * 0.4);
+        ctx.globalAlpha = a > 1 ? 1 : (a < 0 ? 0 : a);
+        ctx.setTransform(DPR, 0, 0, DPR, 0, y * DPR);
+        ctx.fillRect(x, 0, step + 0.4, H * L.len);
+      }
+    }
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+
+    // horizon glow
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = glowGrad;
+    ctx.fillRect(0, 0, W, H);
+
+    // equalizer horizon
+    ctx.globalCompositeOperation = "source-over";
+    const bw = W < 700 ? 5 : 7, gap = W < 700 ? 4 : 6, n = Math.ceil(W / (bw + gap)), maxH = barMax();
+    ctx.fillStyle = barGrad;
+    ctx.globalAlpha = 0.6 * intro;
+    for (let i = 0; i < n; i++) {
+      const u = i / n;
+      const hill = 0.2 + 0.8 * Math.pow(Math.max(0, Math.sin(Math.PI * u)), 1.1) * (0.75 + 0.25 * Math.sin(u * 9 + 1));
+      const beat = 0.5 + 0.5 * Math.sin(t * 2.4 + i * 0.36 + Math.sin(t * 0.8 + i * 0.12) * 2.2);
+      const e = (0.25 + 0.75 * beat) * (1 + energy * 0.9 + boost * 0.5);
+      const h = Math.min(maxH * 1.2, maxH * hill * e * 0.7) + 2;
+      ctx.fillRect(i * (bw + gap) + gap / 2, H - h, bw, h);
+    }
+
+    // shooting stars
+    ctx.globalCompositeOperation = "lighter";
+    for (let i = shots.length - 1; i >= 0; i--) {
+      const s = shots[i];
+      const k = 1 - s.age / s.life;
+      const x2 = s.x - s.vx * 0.09, y2 = s.y - s.vy * 0.09;
+      const g = ctx.createLinearGradient(s.x, s.y, x2, y2);
+      g.addColorStop(0, "rgba(255,255,255," + (0.9 * k).toFixed(3) + ")");
+      g.addColorStop(1, "rgba(160,200,255,0)");
+      ctx.globalAlpha = 1;
+      ctx.strokeStyle = g; ctx.lineWidth = 1.6;
+      ctx.beginPath(); ctx.moveTo(s.x, s.y); ctx.lineTo(x2, y2); ctx.stroke();
+    }
+    ctx.globalCompositeOperation = "source-over";
+    ctx.globalAlpha = 1;
+  }
+
+  function update(t, dt) {
+    energy *= Math.pow(0.05, dt);
+    boost *= Math.pow(0.35, dt);
+    mx += (tx - mx) * Math.min(1, dt * 3);
+    my += (ty - my) * Math.min(1, dt * 3);
+    for (let i = shots.length - 1; i >= 0; i--) {
+      const s = shots[i];
+      s.x += s.vx * dt; s.y += s.vy * dt; s.age += dt;
+      if (s.age > s.life) shots.splice(i, 1);
+    }
+    if (t > nextShot) {
+      const dir = Math.random() < 0.5 ? -1 : 1;
+      shots.push({
+        x: W * (0.15 + Math.random() * 0.7), y: H * Math.random() * 0.3,
+        vx: dir * (500 + Math.random() * 300), vy: 220 + Math.random() * 160, age: 0, life: 0.9
+      });
+      nextShot = t + 5 + Math.random() * 7;
+    }
+  }
+
+  function frame(now) {
+    const t = (now - T0) / 1000;
+    const dt = Math.min(0.05, (now - last) / 1000);
+    last = now;
+    update(t, dt);
+    draw(t);
+    for (let i = 0; i < hooks.length; i++) hooks[i](t);
+    requestAnimationFrame(frame);
+  }
+
+  build();
+  let rs = 0;
+  window.addEventListener("resize", () => {
+    clearTimeout(rs);
+    rs = setTimeout(() => { build(); if (reduce) { draw(8); hooks.forEach(h => h(8)); } }, 120);
+  });
+  if (reduce) {
+    draw(8);
+  } else {
+    window.addEventListener("pointermove", e => { tx = (e.clientX / W - 0.5) * 2; ty = (e.clientY / H - 0.5) * 2; }, { passive: true });
+    requestAnimationFrame(frame);
+  }
+
+  return {
+    reduce,
+    pulse(n) { energy = Math.min(1.6, energy + n); },
+    burst() { boost = 1.5; energy = 1.5; if (reduce) draw(8); },
+    onFrame(fn) { hooks.push(fn); if (reduce) fn(8); }
+  };
+})();
+
+/* ============ Planet staff ring and orbiting notes ============ */
+(() => {
+  const sys = document.getElementById("system");
+  const vinyl = sys.querySelector(".vinyl");
+  const COLORS = ["#5cffb0", "#2de2e6", "#8b5cff", "#c457f0", "#ff4fd8"];
+  const KS = [1.42, 1.47, 1.52, 1.57, 1.62];
+  ["back", "front"].forEach(kind => {
+    KS.forEach((k, i) => {
+      const r = document.createElement("i");
+      r.className = "ring " + kind;
+      r.style.setProperty("--k", k);
+      r.style.setProperty("--c", COLORS[i]);
+      sys.appendChild(r);
+    });
+  });
+  const GLYPHS = ["♪", "♫", "♩", "♬"];
+  const notes = GLYPHS.map((g, i) => {
+    const n = document.createElement("span");
+    n.className = "note"; n.textContent = g;
+    n.style.setProperty("--c", COLORS[(i * 2 + 1) % 5]);
+    sys.appendChild(n);
+    return n;
+  });
+  const TILT = -17 * Math.PI / 180, RATIO = 0.27, K = 1.52;
+  Sky.onFrame(t => {
+    const d = vinyl.offsetWidth, a = d * K / 2, b = a * RATIO;
+    for (let i = 0; i < notes.length; i++) {
+      const th = t * (0.34 + i * 0.03) + i * 1.6;
+      const x = a * Math.cos(th), y = b * Math.sin(th);
+      const xr = x * Math.cos(TILT) - y * Math.sin(TILT);
+      const yr = x * Math.sin(TILT) + y * Math.cos(TILT);
+      const front = Math.sin(th) > 0;
+      const n = notes[i];
+      n.style.transform = "translate(" + xr.toFixed(1) + "px," + yr.toFixed(1) + "px) translate(-50%,-50%) scale(" + (front ? 1.15 : 0.8) + ")";
+      n.style.zIndex = front ? 3 : 0;
+      n.style.opacity = front ? 1 : 0.5;
+    }
+  });
+})();
+
+/* ============ Sound: soft pentatonic notes while typing (off by default) ============ */
+const Sound = (() => {
+  let ac = null, master = null, on = false, idx = 0;
+  const PENT = [0, 2, 4, 7, 9];
+  function init() {
+    if (ac) return true;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return false;
+    ac = new AC();
+    master = ac.createGain(); master.gain.value = 0.9;
+    const dly = ac.createDelay(1); dly.delayTime.value = 0.27;
+    const fb = ac.createGain(); fb.gain.value = 0.34;
+    const lp = ac.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 2400;
+    master.connect(ac.destination);
+    master.connect(dly); dly.connect(lp); lp.connect(fb); fb.connect(dly); lp.connect(ac.destination);
+    return true;
+  }
+  function tone(semi, dur, vol, when) {
+    if (!on || !ac) return;
+    const t = ac.currentTime + (when || 0);
+    const o = ac.createOscillator(), g = ac.createGain();
+    o.type = "sine"; o.frequency.value = 220 * Math.pow(2, semi / 12);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.linearRampToValueAtTime(vol, t + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(master);
+    o.start(t); o.stop(t + dur + 0.05);
+  }
+  return {
+    get on() { return on; },
+    toggle() {
+      on = !on;
+      if (on) {
+        if (!init()) { on = false; return false; }
+        if (ac.resume) ac.resume();
+        this.chime();
+      }
+      return on;
+    },
+    key() {
+      if (!on) return;
+      idx = (idx + (Math.random() < 0.5 ? 1 : 2)) % 10;
+      tone(PENT[idx % 5] + 12 * Math.floor(idx / 5) + 12, 0.7, 0.05);
+    },
+    chime() { tone(12, 0.9, 0.04); tone(19, 1.1, 0.03, 0.09); },
+    done() { [0, 4, 7, 12, 16, 19, 24].forEach((s, i) => tone(s + 12, 1.4, 0.05, i * 0.1)); }
+  };
+})();
+
+/* ============ The form ============ */
+(() => {
+  const form = document.getElementById("regForm");
+  const panel = document.getElementById("panel");
+  const banner = document.getElementById("banner");
+  const submitBtn = document.getElementById("submitBtn");
+  const goText = document.getElementById("goText");
+  const done = document.getElementById("done");
+  const panelHead = document.getElementById("panelHead");
+  const progBars = Array.from(document.querySelectorAll("#prog i"));
+  const progText = document.getElementById("progText");
+
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const FB_RE = /^https?:\/\/((www|m|mbasic|web)\.)?(facebook\.com|fb\.com|fb\.me)\/[^\s]+$/i;
+  const cleanPhone = v => v.replace(/[\s\-().]/g, "");
+  const normName = v => v.replace(/\s+/g, " ").trim();
+  const normFb = v => { v = v.trim(); if (v && !/^https?:\/\//i.test(v)) v = "https://" + v.replace(/^\/+/, ""); return v; };
+  const todayISO = () => {
+    const d = new Date(), p = n => String(n).padStart(2, "0");
+    return d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate());
+  };
+  const validDob = v => {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(v)) return false;
+    const [y, m, d] = v.split("-").map(Number);
+    const dt = new Date(Date.UTC(y, m - 1, d));
+    if (dt.getUTCFullYear() !== y || dt.getUTCMonth() !== m - 1 || dt.getUTCDate() !== d) return false;
+    return v >= "1950-01-01" && v <= todayISO();
+  };
+
+  const FIELDS = {
+    name: { test: v => normName(v).length >= 2, msg: "Enter your full name." },
+    studentId: { test: v => CONFIG.studentId.test(v.trim()), msg: "Student ID needs at least 8 digits, for example 24141091." },
+    semester: { test: v => v.trim().length >= 1, msg: "Enter your semester, for example Fall 2026." },
+    gsuite: {
+      test: v => EMAIL_RE.test(v.trim()) && (!CONFIG.gsuiteDomain || v.trim().toLowerCase().endsWith(CONFIG.gsuiteDomain)),
+      msg: CONFIG.gsuiteDomain ? "Use your university address ending in " + CONFIG.gsuiteDomain + "." : "Enter a valid email address."
+    },
+    personalMail: { test: v => EMAIL_RE.test(v.trim()), msg: "Enter a valid email address, for example name@gmail.com." },
+    phone: { test: v => /^\+?\d{10,15}$/.test(cleanPhone(v)), msg: "Enter a phone number with 10 to 15 digits." },
+    dob: { test: validDob, msg: "Pick your date of birth. It must be a date in the past." },
+    facebook: { test: v => FB_RE.test(normFb(v)), msg: "Paste the link to your Facebook profile, starting with facebook.com." }
+  };
+  const KEYS = Object.keys(FIELDS);
+
+  const els = {};
+  KEYS.forEach(k => {
+    const row = form.querySelector('.field[data-key="' + k + '"]');
+    els[k] = { row, input: row.querySelector("input"), err: row.querySelector(".err"), touched: false };
+  });
+
+  // Date of birth can not be in the future.
+  els.dob.input.max = todayISO();
+
+  function check(k, show) {
+    const f = els[k], v = f.input.value;
+    const filled = v.trim() !== "";
+    const ok = filled && FIELDS[k].test(v);
+    f.row.classList.toggle("ok", ok);
+    const bad = show && !ok;
+    f.row.classList.toggle("bad", bad);
+    f.input.setAttribute("aria-invalid", bad ? "true" : "false");
+    f.err.textContent = bad ? FIELDS[k].msg : "";
+    return ok;
+  }
+
+  function progress() {
+    let n = 0;
+    KEYS.forEach(k => { const v = els[k].input.value; if (v.trim() !== "" && FIELDS[k].test(v)) n++; });
+    progBars.forEach((b, i) => b.classList.toggle("on", i < n));
+    progText.textContent = n + " of 8 filled";
+  }
+
+  KEYS.forEach(k => {
+    const f = els[k];
+    f.input.addEventListener("input", e => {
+      if (k === "studentId") f.input.value = f.input.value.replace(/\D/g, "").slice(0, 15);
+      if (k === "dob") f.input.classList.toggle("has", f.input.value !== "");
+      check(k, f.touched);
+      progress();
+      Sky.pulse(0.3);
+      if (e.inputType && e.inputType.indexOf("delete") !== 0) Sound.key();
+    });
+    f.input.addEventListener("change", () => {
+      if (k === "dob") f.input.classList.toggle("has", f.input.value !== "");
+      check(k, f.touched); progress();
+    });
+    f.input.addEventListener("blur", () => { if (f.input.value.trim() !== "") f.touched = true; check(k, f.touched); progress(); });
+    f.input.addEventListener("focus", () => Sound.chime());
+  });
+  setTimeout(progress, 400); // picks up browser autofill
+
+  function showBanner(msg) {
+    banner.textContent = msg;
+    banner.classList.add("show");
+    banner.scrollIntoView({ block: "nearest", behavior: Sky.reduce ? "auto" : "smooth" });
+  }
+  function hideBanner() { banner.classList.remove("show"); banner.textContent = ""; }
+  function busy(on) {
+    submitBtn.disabled = on;
+    submitBtn.classList.toggle("busy", on);
+    goText.textContent = on ? "Registering" : "Register";
+  }
+
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+    hideBanner();
+
+    let first = null;
+    KEYS.forEach(k => { els[k].touched = true; if (!check(k, true) && !first) first = k; });
+    progress();
+    if (first) {
+      els[first].input.focus();
+      panel.classList.remove("shake"); void panel.offsetWidth; panel.classList.add("shake");
+      return;
+    }
+    if (CONFIG.scriptUrl.indexOf("PASTE_") === 0) {
+      showBanner("Setup is not finished: the web app URL is missing in index.html.");
+      return;
+    }
+
+    const values = {
+      name: normName(els.name.input.value),
+      studentId: els.studentId.input.value.trim(),
+      semester: els.semester.input.value.trim(),
+      gsuite: els.gsuite.input.value.trim().toLowerCase(),
+      personalMail: els.personalMail.input.value.trim().toLowerCase(),
+      phone: cleanPhone(els.phone.input.value),
+      dob: els.dob.input.value,
+      facebook: normFb(els.facebook.input.value)
+    };
+    const fd = new FormData(form);
+    Object.keys(values).forEach(k => fd.set(k, values[k]));
+
+    busy(true);
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 25000);
+    try {
+      const res = await fetch(CONFIG.scriptUrl, { method: "POST", body: fd, signal: ctrl.signal });
+      let data = null;
+      try { data = await res.json(); } catch (x) { data = null; }
+      if (!data) {
+        showBanner("The server sent a reply this page could not read. Wait a moment and try again. If it keeps happening, tell the club team.");
+      } else if (data.ok) {
+        showDone(values);
+      } else {
+        showBanner(data.error || "Something went wrong. Try again.");
+      }
+    } catch (err) {
+      showBanner(err && err.name === "AbortError"
+        ? "The server took too long to answer. Check your connection and press Register again."
+        : "Could not reach the server. Check your connection and press Register again.");
+    } finally {
+      clearTimeout(timer);
+      busy(false);
+    }
+  });
+
+  function showDone(v) {
+    document.getElementById("tName").textContent = v.name;
+    document.getElementById("tId").textContent = v.studentId;
+    document.getElementById("tSem").textContent = v.semester;
+    document.getElementById("doneTitle").textContent = "You are registered, " + v.name.split(" ")[0] + ".";
+    const wave = document.getElementById("wave");
+    wave.textContent = "";
+    v.studentId.split("").forEach((ch, i) => {
+      const d = Number(ch);
+      [0, 1].forEach(j => {
+        const b = document.createElement("i");
+        b.style.height = (28 + ((d * 7 + j * 17 + i * 5) % 72)) + "%";
+        b.style.animationDelay = (-(i * 2 + j) * 0.13).toFixed(2) + "s";
+        wave.appendChild(b);
+      });
+    });
+    form.hidden = true; panelHead.hidden = true; banner.classList.remove("show");
+    done.hidden = false;
+    document.getElementById("doneTitle").focus({ preventScroll: true });
+    Sky.burst(); Sound.done();
+    form.reset();
+    KEYS.forEach(k => { els[k].touched = false; els[k].input.classList.remove("has"); check(k, false); });
+    progress();
+  }
+
+  document.getElementById("againBtn").addEventListener("click", () => {
+    done.hidden = true; form.hidden = false; panelHead.hidden = false;
+    els.name.input.focus();
+  });
+
+  const soundBtn = document.getElementById("soundBtn"), soundLabel = document.getElementById("soundLabel");
+  soundBtn.addEventListener("click", () => {
+    const on = Sound.toggle();
+    soundBtn.setAttribute("aria-pressed", on ? "true" : "false");
+    soundLabel.textContent = on ? "Sound on" : "Sound off";
+  });
+})();
+</script>
+</body>
+</html>
